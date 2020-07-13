@@ -1,7 +1,16 @@
 <?php
 
-
-function getRandPostIds($category_id, $count = 2, $post__not_in = [], $max_count_cache = 1000) {
+/**
+ * Get ids of random posts from category or globally
+ *
+ * @param int $count
+ * @param array|int $category_id
+ * @param array $post__not_in
+ * @param integer $max_count_cache
+ * @return void
+ */
+function getRandPostIds($count, $category_id = null, $post__not_in = [], $max_count_cache = 1000)
+{
     $cache_key = 'rand-' . (is_array($category_id) ? implode(',', $category_id) : (int)$category_id);
     if (false === ($ids = get_transient($cache_key))) {
         $args = array(
@@ -11,7 +20,7 @@ function getRandPostIds($category_id, $count = 2, $post__not_in = [], $max_count
             'fields' => 'ids',
         );
 
-        if($category_id) {
+        if ($category_id) {
             $args['category__in'] = $category_id;
         }
 
@@ -20,7 +29,7 @@ function getRandPostIds($category_id, $count = 2, $post__not_in = [], $max_count
         set_transient($cache_key, $ids, HOUR_IN_SECONDS);
     }
 
-    if(!is_array($post__not_in )) {
+    if (!is_array($post__not_in)) {
         $post__not_in = (array)$post__not_in;
     }
 
@@ -28,11 +37,11 @@ function getRandPostIds($category_id, $count = 2, $post__not_in = [], $max_count
     $rand_keys = array_rand($ids, $count + count($post__not_in));
     $rand_keys = (array)$rand_keys;
 
-    foreach($rand_keys as $key) {
+    foreach ($rand_keys as $key) {
         if (!in_array($ids[$key],  $post__not_in)) {
-            $return [] = $ids[$key];
+            $return[] = $ids[$key];
         }
-        if(count($return) >= $count) {
+        if (count($return) >= $count) {
             break;
         }
     }

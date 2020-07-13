@@ -7,5 +7,3 @@ if (false === ($special_query_results = get_transient('special_query_results')))
     $special_query_results = new WP_Query('cat=5&order=random&tag=tech&post_meta_key=thumbnail');
     set_transient('special_query_results', $special_query_results);
 }
-
-?>
